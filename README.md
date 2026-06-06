@@ -215,5 +215,3 @@ done
 - **Stable**: Pinned plugin versions via vim-plug, avoids Neovim 0.11-only features
 - **Synced with tmux**: Same vim-style keybindings across editor and terminal
 - **DevOps-ready**: LSP/formatter/linter coverage for Python, JS/TS, Go, Rust, YAML/JSON, Shell
-# nvim_v2
-# nvim_v2
