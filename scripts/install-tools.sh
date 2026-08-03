@@ -1,44 +1,18 @@
-#!/bin/bash
-# ~/.config/nvim/scripts/install-tools.sh
-# Installs all formatters and tools via Mason.
+#!/usr/bin/env bash
+set -eu
 
-SOCKET="/tmp/nvim-mason.sock"
-TOOLS="stylua shfmt ruff black rustfmt goimports clang_format prettier taplo tree-sitter-cli"
+config_dir=$(cd "$(dirname "$0")/.." && pwd)
+plug_path=$(nvim --headless -u NONE +'lua io.write(vim.fn.stdpath("data"))' +qa)/site/autoload/plug.vim
 
-# Kill any old socket
-rm -f "$SOCKET"
-
-echo "Starting headless nvim RPC server..."
-nvim --headless --listen "$SOCKET" +qa 2>/dev/null &
-NVIM_PID=$!
-
-# Wait for socket
-for i in $(seq 1 20); do
-  if [ -S "$SOCKET" ]; then
-    echo "Socket ready after ${i}s"
-    break
-  fi
-  sleep 1
-done
-
-if [ ! -S "$SOCKET" ]; then
-  echo "ERROR: nvim socket not found after 20s"
-  kill $NVIM_PID 2>/dev/null
-  exit 1
+if [ ! -f "$plug_path" ]; then
+  mkdir -p "$(dirname "$plug_path")"
+  curl -fLo "$plug_path" https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
-# Give plugins extra time to load
-sleep 5
+nvim --headless --cmd "set runtimepath^=$config_dir" -u "$config_dir/init.lua" \
+  '+PlugInstall --sync' +qa
 
-echo "Installing tools via Mason..."
-for TOOL in $TOOLS; do
-  echo "  Installing $TOOL..."
-  timeout 120 nvim --server "$SOCKET" --remote-expr "lua vim.cmd('MasonInstall $TOOL')" 2>/dev/null
-  sleep 2
-done
+nvim --headless --cmd "set runtimepath^=$config_dir" -u "$config_dir/init.lua" \
+  -l "$config_dir/scripts/install-tools.lua"
 
-# Wait for all installs
-sleep 10
-
-echo "Done. Restart nvim and run :Mason to verify."
-kill $NVIM_PID 2>/dev/null
+echo 'Neovim plugins, language tools, and parsers are ready.'

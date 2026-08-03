@@ -1,217 +1,123 @@
-# Neovim + tmux Configuration
+# Neovim Slim
 
-## Machine Info
+A small, practical Neovim configuration for low-spec Linux machines. It targets
+Neovim 0.12+ and keeps the core IDE features without a dashboard, animated UI,
+tab bar, debugger UI, or duplicate plugins.
 
-- **OS**: Ubuntu 24.04.4 LTS
-- **Neovim**: v0.12.2 (at `~/.local/bin/nvim`)
-- **Config**: `~/.config/nvim/`
-- **tmux Config**: `~/.tmux.conf`
+## Features
 
-## Directory Structure
+- Fast file search and live grep with fzf-lua
+- File explorer with nvim-tree
+- Native buffers and splits
+- Treesitter highlighting when a C compiler is available
+- LSP management with Mason and Neovim's native LSP API
+- Lightweight completion with blink.cmp's portable Lua matcher
+- Format-on-save with conform.nvim
+- Git signs, blame, and diff
+- Comments, pairs, surround, and safe buffer deletion via mini.nvim
+- Integrated terminal and discoverable keymaps
 
-```
-~/.config/nvim/
-├── init.lua              # Entry point, plugin bootstrap
-├── lua/
-│   ├── plugins.lua      # Plugin config loader
-│   ├── config/
-│   │   ├── options.lua  # Editor options
-│   │   ├── mappings.lua  # Key mappings
-│   │   └── autocmd.lua  # Autocommands
-│   └── plugins/
-│       ├── ui.lua       # Theme, statusline, explorer, finder
-│       ├── lsp.lua      # LSP, Mason, completion (nvim-cmp)
-│       ├── treesitter.lua
-│       └── formatter.lua
-└── README.md            # This file
-```
+## Requirements
 
-## Update Plugins
+Required:
 
 ```bash
-nvim --headless +PlugUpdate +q
+sudo apt install curl git neovim ripgrep
 ```
 
-## Add / Remove Plugins
+Recommended for all features:
 
-1. Edit `init.lua`, add/remove `Plug(...)` lines
-2. Run `:PlugInstall` or `:PlugUpdate`
+```bash
+sudo apt install build-essential nodejs npm golang-go
+```
 
-## Add New LSP
+Node is needed by the JavaScript/TypeScript, Bash, JSON/YAML, HTML/CSS, Docker,
+and Pyright language servers. Go is needed by `gopls` and `goimports`. A C
+compiler is needed to build Treesitter parsers. Rust projects should install
+`rustfmt` through rustup.
 
-1. Install: `:MasonInstall <lsp-name>`
-2. Edit `lua/plugins/lsp.lua` → add entry in `mason_servers` table
-3. Restart Neovim
+## Install
 
-## Language Stack
+```bash
+git clone -b alf-slim https://github.com/HaPhanBaoMinh/nvim_v2.git ~/.config/nvim
+cd ~/.config/nvim
+./scripts/install-tools.sh
+```
 
-| Language | LSP | Formatter | Notes |
-|----------|-----|-----------|-------|
-| Python | pyright | ruff / black | |
-| JS/TS | vtsls, tsserver | prettier | |
-| JSON/YAML | jsonls, yamlls | prettier | |
-| Go | gopls | gofmt | |
-| Rust | rust_analyzer | rustfmt, clippy | |
-| Shell | bashls | shfmt | |
-| Lua | lua_ls | stylua | |
+The installer is safe to run again. It installs vim-plug, plugins, portable
+tools, available language servers, and Treesitter parsers. Packages whose system
+runtime is missing are reported and skipped instead of breaking Neovim.
 
-## Key Mappings
+Run the built-in verification:
 
-### General
+```bash
+nvim --headless -l ~/.config/nvim/scripts/check.lua
+```
 
-| Mapping | Action |
-|---------|--------|
+Inside Neovim, use `:checkhealth`, `:Mason`, and `:ConformInfo` for details.
+
+## Keymaps
+
+The leader key is `Space`.
+
+| Key | Action |
+| --- | --- |
 | `<Space>w` | Save |
-| `<Space>q` | Quit |
-| `<Space>Q` | Force quit |
-| `<C-h/j/k/l>` | Navigate windows |
-| `<C-Arrow>` | Resize windows |
+| `<Space>q` | Quit window |
+| `<Space>e` | Toggle file explorer |
+| `<Space>ff` | Find files |
+| `<Space>fg` | Live grep |
+| `<Space>fw` | Find word under cursor |
+| `<Space>fr` | Recent files |
+| `<Space>bb` | Choose buffer |
 | `[b` / `]b` | Previous / next buffer |
 | `<Space>bd` | Delete buffer |
+| `<C-h/j/k/l>` | Move between splits |
+| `<Space>sv` / `<Space>sh` | Vertical / horizontal split |
+| `<Space>gs` | Git status |
+| `<Space>gb` | Blame current line |
+| `<Space>gd` | Diff current file |
+| `<Space>xx` | Workspace diagnostics |
+| `<C-t>` | Toggle terminal |
+| `<Esc><Esc>` | Leave terminal mode |
 
-### File & Search
+LSP mappings are enabled only after a server attaches:
 
-| Mapping | Action |
-|---------|--------|
-| `<Space>ff` | Find files (Telescope) |
-| `<Space>fg` | Live grep (Telescope) |
-| `<Space>fb` | Find buffers |
-| `<Space>fh` | Help tags |
-| `<Space>fr` | Recent files |
-| `<Space>fc` | Find word under cursor |
+| Key | Action |
+| --- | --- |
+| `gd` / `gD` | Definition / declaration |
+| `gr` / `gi` | References / implementations |
+| `K` | Hover documentation |
+| `<Space>ca` | Code action |
+| `<Space>cr` | Rename |
+| `<Space>cf` | Format |
+| `<Space>cd` | Line diagnostics |
+| `[d` / `]d` | Previous / next diagnostic |
 
-### File Explorer
+Press `Space` and wait briefly to see available groups in WhichKey.
 
-| Mapping | Action |
-|---------|--------|
-| `<Space>e` | Toggle NvimTree |
-| `<Space>er` | Refresh NvimTree |
+## Languages
 
-### Terminal
+The configuration is ready for Lua, Python, JavaScript/TypeScript, Go, Rust,
+Shell, C/C++, JSON/YAML, HTML/CSS, Docker, TOML, and Markdown. Mason enables only
+servers that are installed, so missing language toolchains do not slow or break
+startup.
 
-| Mapping | Action |
-|---------|--------|
-| `<C-t>` | Toggle floating terminal |
-| `<Space>th` | Horizontal terminal |
-| `<Space>tv` | Vertical terminal |
+## Format control
 
-### LSP
-
-| Mapping | Action |
-|---------|--------|
-| `gd` | Go to definition |
-| `gD` | Go to declaration |
-| `gi` | Go to implementation |
-| `gr` | Show references |
-| `K` | Hover docs |
-| `<Space>la` | Code action |
-| `<Space>lr` | Rename |
-| `<Space>lf` | Format buffer |
-| `gl` | Diagnostic float |
-| `[d` / `]d` | Prev / next diagnostic |
-
-### Treesitter Objects
-
-| Mapping | Action |
-|---------|--------|
-| `if` / `af` | Inside / around function |
-| `ic` / `ac` | Inside / around class |
-| `ia` / `aa` | Inside / around parameter |
-
-## tmux Key Mappings
-
-| Mapping | Action |
-|---------|--------|
-| `C-b` | Prefix |
-| `h/j/k/l` | Navigate panes (vim-style) |
-| `|` | Split horizontal |
-| `-` | Split vertical |
-| `c` | New window |
-| `r` | Reload config |
-| `v` (copy mode) | Start selection |
-| `y` (copy mode) | Copy selection |
-| `[` | Enter copy mode |
-| `E` | Toggle sync panes |
-| `x` | Kill pane |
-| `d` | Detach session |
-
-## Troubleshooting
-
-### Editor
-
-- **LSP not working**: Run `:LspInfo`, check `:LspLog`
-- **Plugins broken**: Run `:PlugClean` then `:PlugInstall`
-- **Treesitter broken**: Run `:TSUpdate` to rebuild parsers
-- **Slow startup**: Run `nvim --startuptime /tmp/startup.log` and check the log
-- **Checkhealth**: Run `:checkhealth` for full diagnostics
-
-### tmux
-
-- **Config reload failed**: Check syntax with `tmux -f ~/.tmux.conf start-server`
-- **Mouse not working**: Press `C-b m` to toggle mouse mode
-- **Copy mode issues**: Ensure `xsel` is installed for clipboard integration
-
-## Next Steps After This Install
-
-### 1. Install System Tooling
-
-Run this in your terminal (requires sudo password):
-
-```bash
-sudo apt update && sudo apt install -y \
-  tmux nodejs npm golang-go rustc cargo fd-find fzf \
-  shellcheck yamllint jq unzip xsel
-```
-
-### 2. Install Neovim Plugins
-
-```bash
-nvim --headless +PlugInstall +q
-```
-
-### 3. Install Mason LSP Packages
-
-Open nvim and run:
+Formatting runs on save when a formatter or LSP formatter is available.
 
 ```vim
-:MasonInstall pyright vtsls jsonls yamlls gopls rust_analyzer bashls lua_ls html cssls dockerls
-:MasonInstall ruff prettier shfmt stylua taplo
+:FormatDisable      " Disable globally
+:FormatDisable!     " Disable for this buffer
+:FormatEnable
 ```
 
-Or from shell:
+## Update
 
-```bash
-nvim --headless \
-  +'MasonInstall pyright vtsls jsonls yamlls gopls rust_analyzer bashls lua_ls html cssls dockerls' \
-  +'MasonInstall ruff prettier shfmt stylua taplo' \
-  +q
+```vim
+:PlugUpdate
+:TSUpdate
 ```
 
-### 4. Build Treesitter Parsers
-
-```bash
-nvim --headless +TSUpdateSync +q
-```
-
-### 5. Verify Everything Works
-
-```bash
-# Test nvim loads
-nvim --headless +q && echo "Neovim: OK"
-
-# Test tmux config
-tmux -f ~/.tmux.conf start-server && echo "tmux: OK"
-
-# Test formatters available
-for fmt in shfmt prettier ruff rustfmt gofmt; do
-  which $fmt && echo "$fmt: OK" || echo "$fmt: MISSING"
-done
-```
-
-## Config Philosophy
-
-- **Minimal but complete**: Only essential plugins, no bloat
-- **Modular**: Each plugin/feature has its own file
-- **Stable**: Pinned plugin versions via vim-plug, avoids Neovim 0.11-only features
-- **Synced with tmux**: Same vim-style keybindings across editor and terminal
-- **DevOps-ready**: LSP/formatter/linter coverage for Python, JS/TS, Go, Rust, YAML/JSON, Shell
+Then run `./scripts/install-tools.sh` and the headless check again.

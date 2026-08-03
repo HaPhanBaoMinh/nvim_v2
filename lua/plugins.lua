@@ -1,25 +1,19 @@
--- ~/.config/nvim/lua/plugins.lua
--- Plugin config loader — loads all plugin configs
+local modules = {
+	"plugins.ui",
+	"plugins.editor",
+	"plugins.fzf-lua",
+	"plugins.treesitter",
+	"plugins.completion",
+	"plugins.lsp",
+	"plugins.formatter",
+	"plugins.terminal",
+}
 
-local function safe_require(name)
-  pcall(require, name)
+for _, module in ipairs(modules) do
+	local ok, err = pcall(require, module)
+	if not ok then
+		vim.schedule(function()
+			vim.notify(("%s: %s"):format(module, err), vim.log.levels.WARN)
+		end)
+	end
 end
-
--- Load in order: base UI first, then language tools, then reference-repo plugins
-safe_require('plugins.ui')
-safe_require('plugins.lsp')
-safe_require('plugins.treesitter')
-safe_require('plugins.formatter')
-
--- Reference repo plugins
-safe_require('plugins.fzf-lua')
-safe_require('plugins.barbar')
-safe_require('plugins.trouble')
-safe_require('plugins.smart-splits')
-safe_require('plugins.vim-test')
-safe_require('plugins.autopairs')
-safe_require('plugins.dashboard')
-safe_require('plugins.diffview')
-safe_require('plugins.dap')
-safe_require('plugins.which-key')
-safe_require('plugins.cmp')
