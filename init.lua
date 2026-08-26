@@ -80,6 +80,9 @@ Plug 'folke/which-key.nvim'
 " Comment
 Plug 'numToStr/Comment.nvim'
 
+" Marks / bookmarks
+Plug 'chentoast/marks.nvim'
+
 " Indent guides
 Plug 'lukas-reineke/indent-blankline.nvim'
 
