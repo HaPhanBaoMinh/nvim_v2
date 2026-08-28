@@ -1,7 +1,15 @@
 -- ~/.config/nvim/lua/plugins/autopairs.lua
 -- nvim-autopairs configuration from reference repo
 
-pcall(require, 'nvim-autopairs').setup({
+local ok, autopairs = pcall(require, 'nvim-autopairs')
+if not ok then
+  vim.schedule(function()
+    vim.notify('[nvim-autopairs] plugin not found, run :PlugInstall', vim.log.levels.WARN)
+  end)
+  return
+end
+
+autopairs.setup({
   disable_in_macro = true,
   disable_in_visualblock = false,
   disable_in_replace_mode = true,
