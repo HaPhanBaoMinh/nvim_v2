@@ -7,6 +7,7 @@ if not ok then return end
 wk.setup({
   delay = 120,
   notify = false,
+  win = { border = 'single' },
 })
 
 wk.add({

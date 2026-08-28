@@ -43,7 +43,12 @@ Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 " LSP
 Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
-Plug 'neovim/nvim-lspconfig'
+if has('nvim-0.11')
+  Plug 'neovim/nvim-lspconfig'
+else
+  " nvim-lspconfig v2+ requires Neovim 0.11; use the final v1 release on older Nvim.
+  Plug 'neovim/nvim-lspconfig', { 'tag': 'v1.8.0' }
+endif
 
 " Completion
 Plug 'hrsh7th/nvim-cmp'

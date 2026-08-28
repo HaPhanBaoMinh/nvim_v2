@@ -212,6 +212,6 @@ done
 
 - **Minimal but complete**: Only essential plugins, no bloat
 - **Modular**: Each plugin/feature has its own file
-- **Stable**: Pinned plugin versions via vim-plug, avoids Neovim 0.11-only features
+- **Compatible**: Uses current plugins on Neovim 0.11+ and pins `nvim-lspconfig` v1.8.0 on older releases
 - **Synced with tmux**: Same vim-style keybindings across editor and terminal
 - **DevOps-ready**: LSP/formatter/linter coverage for Python, JS/TS, Go, Rust, YAML/JSON, Shell

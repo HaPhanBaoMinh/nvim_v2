@@ -2,44 +2,53 @@
 -- UI plugins: theme, statusline, explorer, etc.
 
 -- Theme: TokyoNight
-pcall(require, 'tokyonight').setup({
-  style = 'storm',
-  transparent = false,
-  term_colors = true,
-  styles = {
-    comments = { italic = true },
-    keywords = { italic = true },
-    functions = {},
-    variables = {},
-  },
-})
+local ok_tokyonight, tokyonight = pcall(require, 'tokyonight')
+if ok_tokyonight then
+  tokyonight.setup({
+    style = 'storm',
+    transparent = false,
+    term_colors = true,
+    styles = {
+      comments = { italic = true },
+      keywords = { italic = true },
+      functions = {},
+      variables = {},
+    },
+  })
+end
 
 -- Theme: gruvbox
-pcall(require, 'gruvbox').setup({
-  terminal_colors = true,
-  undercurl = true,
-  underline = true,
-  bold = true,
-  strikethrough = true,
-  dim_inactive = false,
-  transparent_mode = false,
-})
+local ok_gruvbox, gruvbox = pcall(require, 'gruvbox')
+if ok_gruvbox then
+  gruvbox.setup({
+    terminal_colors = true,
+    undercurl = true,
+    underline = true,
+    bold = true,
+    strikethrough = true,
+    dim_inactive = false,
+    transparent_mode = false,
+  })
+end
 
 -- Theme: Catppuccin
-pcall(require, 'catppuccin').setup({
-  flavour = 'mocha',
-  term_colors = true,
-  transparent_background = false,
-  styles = {
-    comments = { 'italic' },
-    keywords = { 'italic' },
-  },
-  integrations = {
-    treesitter = true,
-    lualine = true,
-    dashboard = true,
-  },
-})
+local ok_catppuccin, catppuccin = pcall(require, 'catppuccin')
+if ok_catppuccin then
+  catppuccin.setup({
+    flavour = 'mocha',
+    term_colors = true,
+    transparent_background = false,
+    styles = {
+      comments = { 'italic' },
+      keywords = { 'italic' },
+    },
+    integrations = {
+      treesitter = true,
+      lualine = true,
+      dashboard = true,
+    },
+  })
+end
 
 vim.cmd('colorscheme tokyonight')
 
@@ -110,7 +119,7 @@ if ok_wk then
   wk.setup({
     delay = 120,
     notify = false,
-    window = { border = 'single' },
+    win = { border = 'single' },
     layout = { align = 'center' },
   })
 
