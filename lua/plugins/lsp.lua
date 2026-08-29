@@ -140,9 +140,6 @@ local function hover_popup(err, result, ctx, config)
 end
 
 vim.lsp.handlers['textDocument/hover'] = hover_popup
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-  border = 'rounded', max_height = 14,
-})
 
 -- LSP Keymaps (Triggered when a Language Server successfully attaches to a buffer)
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -158,11 +155,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('n', 'gr', vim.lsp.buf.references, 'LSP references')
     map('n', 'gi', vim.lsp.buf.implementation, 'LSP implementation')
     map('n', 'K', vim.lsp.buf.hover, 'LSP hover')
+    map({ 'i', 's' }, '<C-s>', function()
+      vim.lsp.buf.signature_help({ border = 'rounded', max_height = 14 })
+    end, 'LSP signature help')
     map('n', '<Space>cr', vim.lsp.buf.rename, 'LSP rename')
     map({ 'n', 'v' }, '<Space>ca', vim.lsp.buf.code_action, 'LSP code action')
     map('n', '<Space>cd', vim.diagnostic.open_float, 'Diagnostic float')
-    map('n', '[d', function() vim.diagnostic.goto_prev({ float = false }) end, 'Prev diagnostic')
-    map('n', ']d', function() vim.diagnostic.goto_next({ float = false }) end, 'Next diagnostic')
+    map('n', '[d', function() vim.diagnostic.jump({ count = -1 }) end, 'Prev diagnostic')
+    map('n', ']d', function() vim.diagnostic.jump({ count = 1 }) end, 'Next diagnostic')
     map('n', '<Space>cf', function() vim.lsp.buf.format({ async = true }) end, 'LSP format')
   end,
 })
